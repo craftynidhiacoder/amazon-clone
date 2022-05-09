@@ -2,18 +2,26 @@ import React, { useEffect } from "react";
 import "./App.css";
 import Header from "./Header";
 import Home from "./Home";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Checkout from "./Checkout";
 import Login from "./Login";
 import Payment from "./Payment";
+import Orders from "./Orders";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const promise = loadStripe(
-  "pk_test_51Kw1iNSGKLsoFh1ZSmpyVEKU52IpJ6JarjGcyn87uJXuG2D0xKj2oUtclZnVImrZ4v56tbu9jNANtzUc1SYfEfbC00822RF2Q0"
-);
+const promise = async () => {
+  try {
+    return await loadStripe(
+      "pk_test_51Kw1iNSGKLsoFh1ZSmpyVEKU52IpJ6JarjGcyn87uJXuG2D0xKj2oUtclZnVImrZ4v56tbu9jNANtzUc1SYfEfbC00822RF2Q0"
+    );
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 function App() {
   const [{}, dispatch] = useStateValue();
@@ -41,16 +49,31 @@ function App() {
   }, []);
 
   return (
-    // BEM
     <Router>
-      <Elements stripe={promise} element={[<Payment />]}></Elements>
       <div className="app">
-        <Routes>
-          <Route path="/login" element={[<Login />]} />
-          <Route path="/checkout" element={[<Header />, <Checkout />]} />
-          <Route path="/payment" element={[<Header />, <Payment />]} />
-          <Route path="/" element={[<Header />, <Home />]} />
-        </Routes>
+        <Switch>
+          <Route path="/orders">
+            <Header />
+            <Orders />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <Route path="/checkout">
+            <Header />
+            <Checkout />
+          </Route>
+          <Route path="/payment">
+            <Header />
+            <Elements stripe={promise()}>
+              <Payment />
+            </Elements>
+          </Route>
+          <Route path="/">
+            <Header />
+            <Home />
+          </Route>
+        </Switch>
       </div>
     </Router>
   );

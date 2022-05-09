@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { auth } from "./firebase";
 
 function Login() {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,7 +14,7 @@ function Login() {
     auth
       .signInWithEmailAndPassword(email, password)
       .then((auth) => {
-        navigate("/");
+        history.push("/");
       })
       .catch((error) => alert(error.message));
   };
@@ -28,7 +28,7 @@ function Login() {
         // it successfully created a new user with email and password
         console.log(auth);
         if (auth) {
-          navigate("/");
+          history.push("/");
         }
       })
       .catch((error) => alert(error.message));
