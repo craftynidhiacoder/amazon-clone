@@ -12,16 +12,9 @@ import { useStateValue } from "./StateProvider";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const promise = async () => {
-  try {
-    return await loadStripe(
+const promise = loadStripe(
       "pk_test_51Kw1iNSGKLsoFh1ZSmpyVEKU52IpJ6JarjGcyn87uJXuG2D0xKj2oUtclZnVImrZ4v56tbu9jNANtzUc1SYfEfbC00822RF2Q0"
     );
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
 
 function App() {
   const [{}, dispatch] = useStateValue();
@@ -65,7 +58,7 @@ function App() {
           </Route>
           <Route path="/payment">
             <Header />
-            <Elements stripe={promise()}>
+            <Elements stripe={promise}>
               <Payment />
             </Elements>
           </Route>
